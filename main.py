@@ -9,8 +9,8 @@ import random
 from ransac import *
 
 def main():
-    im1 = cv2.imread('1.jpg', 0)
-    im2 = cv2.imread('2.jpg', 0)
+    im1 = cv2.imread('dataset/3-1.jpg', 0)
+    im2 = cv2.imread('dataset/3-2.jpg', 0)
     im1_copy = im1.copy()
     im1 = cv2.copyMakeBorder(im1,200,200,500,500, cv2.BORDER_CONSTANT)
     
@@ -33,10 +33,6 @@ def main():
     
     corrs = np.matrix(correspondenceList)
     out_ransac, inliers = ransac(corrs, 5.0)
-    # out_inv = scipy.linalg.inv(out_ransac)
-    # out_ransac1, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
-
-    # out = cv2.warpPerspective(im2, out_inv, (im1.shape[1],  im1.shape[0]))
     out = cv2.warpPerspective(im2, scipy.linalg.inv(out_ransac), (im1.shape[1],  im1.shape[0]))
 
     output = np.zeros_like(im1)
@@ -70,6 +66,7 @@ def main():
 
     plt.show()
 
+    cv2.imwrite('results/result3.jpg', output)
 
 if __name__ == "__main__":
     main()
