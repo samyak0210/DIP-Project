@@ -11,8 +11,8 @@ from seam import *
 from tqdm import *
 
 def main():
-    im1 = cv2.imread('1.jpg', 0)
-    im2 = cv2.imread('2.jpg', 0)
+    im1 = cv2.imread('dataset/1-1.jpg', 0)
+    im2 = cv2.imread('dataset/1-2.jpg', 0)
     im1_copy = im1.copy()
     im1 = cv2.copyMakeBorder(im1,200,200,500,500, cv2.BORDER_CONSTANT)
     
@@ -32,7 +32,7 @@ def main():
     src_pts = np.float32([ kp1[m.queryIdx].pt for m in matches ]).reshape(-1,1,2)
     dst_pts = np.float32([ kp2[m.trainIdx].pt for m in matches ]).reshape(-1,1,2)
     
-    
+    best = -1
     corrs = np.matrix(correspondenceList)
     out_arr, inliers = ransac(corrs, 5.0)
     print(len(out_arr))
@@ -55,15 +55,28 @@ def main():
                 else:
                     output[i,j] = energy(im1, out, 128, 2, i, j)
                     seam.append([i,j])
-                    # output[i][j] = (int(int(im1[i][j]) + int(out[i][j]))/2)
         error = 0
         for [x, y] in seam:
             error += np.sum((output[x-8:x+9, y-8:y+9] - im1[x-8:x+9, y-8:y+9])**2 + (output[x-8:x+9, y-8:y+9] - out[x-8:x+9, y-8:y+9])**2)
         if error/len(seam) < mi:
-            print("hi")
             mi = error/len(seam)
             final_image = np.copy(output)
 
+    out = cv2.warpPerspective(im2, scipy.linalg.inv(out_arr[best]), (im1.shape[1],  im1.shape[0]))
+    output = np.zeros_like(im1)
+    (x, y) = im1.shape
+    seam = []
+    for i in range(x):
+        for j in range(y):
+            if im1[i][j]==0 and out[i][j]==0:
+                output[i][j]=0
+            elif im1[i][j]==0:
+                output[i][j] = out[i][j]
+            elif out[i][j]==0:
+                output[i][j] = (im1[i][j])
+            else:
+                output[i][j] = (int(int(im1[i][j]) + int(out[i][j]))/2)
+    final_image = np.copy(output)
 
     plt.subplot(2,2,1)
     plt.axis('off')

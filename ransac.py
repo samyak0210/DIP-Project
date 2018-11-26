@@ -41,7 +41,7 @@ def geometricDistance(correspondence, h):
 
 def ransac(corr, thresh, dist=5):
     maxInliers = []
-    finalH = None
+    finalH = []
     for i in range(1000):
         corr1 = corr[random.randrange(0, len(corr))]
         corr2 = corr[random.randrange(0, len(corr))]
@@ -61,7 +61,7 @@ def ransac(corr, thresh, dist=5):
 
         if len(inliers) > len(maxInliers):
             maxInliers = inliers
-            finalH = h
+            finalH.append(h)
 
         if len(maxInliers) > (len(corr)*thresh):
             break
