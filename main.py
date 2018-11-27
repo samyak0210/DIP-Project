@@ -11,8 +11,8 @@ from seam import *
 from tqdm import *
 
 def main():
-    im1 = cv2.imread('dataset/1-1.jpg', 0)
-    im2 = cv2.imread('dataset/1-2.jpg', 0)
+    im1 = cv2.imread('./dataset/a1.jpg', 0)
+    im2 = cv2.imread('./dataset/a2.jpg', 0)
     im1_copy = im1.copy()
     im1 = cv2.copyMakeBorder(im1,200,200,500,500, cv2.BORDER_CONSTANT)
     
@@ -96,7 +96,7 @@ def main():
 
     plt.show()
 
-    cv2.imwrite('result1.jpg', final_image)
+    cv2.imwrite('result2.jpg', final_image)
 
 if __name__ == "__main__":
     main()
